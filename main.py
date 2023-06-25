@@ -5,8 +5,14 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV
+from sklearn.linear_model import SGDClassifier, RidgeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC
+from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.base import TransformerMixin, BaseEstimator
+from sklearn.metrics import roc_auc_score
+from ffl.ClassificationBenchmark import ClassificationBenchmark
+from ffl import params
 import numpy as np
 
 class AddFeature(BaseEstimator, TransformerMixin):
@@ -22,7 +28,7 @@ class AddFeature(BaseEstimator, TransformerMixin):
 
 num_pipeline = Pipeline([
     ('inputing', SimpleImputer(strategy='median')),
-    ('adding', AddFeature()),
+    # ('adding', AddFeature()),
     ('scaling', StandardScaler()),
 ])
 
@@ -44,20 +50,18 @@ def main():
     train.drop('Transported', axis=1)
     train = pipeline.fit_transform(train)
 
-    params = {
-        'n_estimators': [10, 50, 100, 250, 500, 1000],
-        'max_depth': [None, 10, 50, 100, 250],
-    }
+    # params = {
+    #     'n_estimators': [10, 50, 100, 250, 500, 1000],
+    #     'max_depth': [None, 10, 50, 100, 250],
+    # }
 
-    gs = GridSearchCV(RandomForestClassifier(), params, n_jobs=-1, scoring='f1')
+    gs = GridSearchCV(SVC(), params.SVC, n_jobs=-1, scoring='f1')
     gs.fit(train, train_y)
-    # gs. max_depth = 10, n = 250
 
-    # rt = RandomForestClassifier(n_estimators=250, max_depth=10, n_jobs=-1)
-    # train = pipeline.fit_transform(train)
-
-    # rt.fit(train, train_y)
-
+#     rt = SVC(n_estimators=250, max_depth=10, n_jobs=-1)
+# #
+#     rt.fit(train, train_y)
+    
     test = pd.read_csv('test.csv')
     pid = test.PassengerId
 
