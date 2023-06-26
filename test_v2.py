@@ -14,8 +14,8 @@ class FeaturesTest(unittest.TestCase):
 
     def test_pid(self):
         pf = PidFeatures()
-        a = ['001_01', '003_05']
-        b = np.array(['01', '05'])
+        a = ['001_01', '003_05', '001_02']
+        b = np.array([False, True, False])
         self.assertTrue((pf.fit_transform(a) == b).all())
 
     def test_makedf(self):
