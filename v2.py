@@ -5,9 +5,6 @@ from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import SGDClassifier, RidgeClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.base import TransformerMixin, BaseEstimator
 
@@ -36,3 +33,26 @@ class PidFeatures(BaseEstimator, TransformerMixin):
     def transform(self, X, y=None):
         f = np.frompyfunc(lambda _: _.split('_')[1], 1, 1)
         return f(X)
+
+class MakeDataFrame(BaseEstimator, TransformerMixin):
+    def __init__(self, columns: list[str]):
+        self.cols = columns
+
+    def fit(self, X, y=None):
+        if X.shape[1] == len(self.cols):
+            return self
+        else:
+            "no, of columns not equal to number of labels provided"
+            raise IndexError
+    def transform(self, X, y=None):
+        return pd.DataFrame(X, columns=self.cols)
+
+
+column_impute_pipeline = ColumnTransformer([
+    ('mode_imputer', SimpleImputer(strategy='mode'), ['HomePlanet', 'CryoSleep', 'Cabin', 'Destination', 'VIP']),
+    ('median_imputer', SimpleImputer(strategy='median'), ['RoomService', 'FoodCourt', 'ShoppingMall', 'VRDeck', 'Spa'])
+])
+
+column_prep_pipeline = ColumnTransformer([
+
+])

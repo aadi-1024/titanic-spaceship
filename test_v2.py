@@ -1,7 +1,8 @@
 import unittest
 import numpy as np
+import pandas as pd
 
-from v2 import CabinFeatures, PidFeatures
+from v2 import CabinFeatures, PidFeatures, MakeDataFrame
 
 
 class FeaturesTest(unittest.TestCase):
@@ -17,6 +18,12 @@ class FeaturesTest(unittest.TestCase):
         b = np.array(['01', '05'])
         self.assertTrue((pf.fit_transform(a) == b).all())
 
+    def test_makedf(self):
+        md = MakeDataFrame(columns=['a', 'b', 'c'])
+        a = np.array([0, 1, 2, 3, 4, 5])
+        a.shape = (2, 3)
+        b = pd.DataFrame(a, columns=['a', 'b', 'c'])
+        self.assertTrue(md.fit_transform(a).equals(b))
 
 if __name__ == '__main__':
     unittest.main(verbosity=2)
