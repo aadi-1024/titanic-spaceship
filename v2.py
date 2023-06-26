@@ -11,14 +11,28 @@ from sklearn.svm import SVC
 from sklearn.model_selection import GridSearchCV, train_test_split
 from sklearn.base import TransformerMixin, BaseEstimator
 
+
 class CabinFeatures(BaseEstimator, TransformerMixin):
-    #USE IN COLUMN TRANSFORMER WITH CABIN AS THE ONLY INPUT
+    # USE IN COLUMN TRANSFORMER WITH CABIN AS THE ONLY INPUT
     def __init__(self):
         pass
+
     def fit(self, X, y=None):
         return self
 
     def transform(self, X, y=None):
         f1 = np.frompyfunc(lambda _: _.split('/')[0], 1, 1)
         f2 = np.frompyfunc(lambda _: _.split('/')[2], 1, 1)
-        return np.c_[X, f1(X), f2(X)]
+        return np.c_[f1(X), f2(X)]
+
+
+class PidFeatures(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        f = np.frompyfunc(lambda _: _.split('_')[1], 1, 1)
+        return f(X)
